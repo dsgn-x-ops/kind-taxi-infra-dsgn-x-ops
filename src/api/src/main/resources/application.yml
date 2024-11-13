@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: taxi-api
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/taxidb}
+    username: ${SPRING_DATASOURCE_USERNAME:taxi_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:taxi_pass}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: 6379
+    timeout: 2000
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+logging:
+  level:
+    root: INFO
+    com.taxidata: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO
