@@ -1,30 +1,55 @@
-# Taxi Data System Challenge
+# Taxi Data System Infrastructure Challenge
 
-## Overview
+## Problem Statement
 
-You are provided with a partially implemented taxi data processing system. Your challenge is to:
+Work for a Transportation Department analyzing taxi ride patterns in NYC. A data generator produces real-time taxi ride information including pick-up/drop-off locations, timestamps, and pricing. Your task is to build the complete infrastructure and processing system to handle this data efficiently.
 
-1. Complete the Kubernetes infrastructure
-2. Implement the Redis configuration
-3. Implement the data processor service
-4. Create build and deployment automation
-5. Ensure all components work together seamlessly
+## Technology Stack
+
+### Required
+
+```
+Backend:
+- Java 17
+- Spring Boot 3.2
+- Python 3.11
+- PostgreSQL 14
+- RabbitMQ 3
+- Redis
+
+Infrastructure:
+- Docker
+- Kubernetes (Kind)
+- kubectl
+- Skaffold
+
+Build Tools:
+- Maven
+- Make
+```
+
+### Optional (For Bonus)
+
+```
+Monitoring:
+- Prometheus
+- OpenTelemetry
+- Jaeger
+```
+
+## System Architecture
+
+### Infrastructure Components
+
+1. PostgreSQL Database
+2. RabbitMQ
+3. Redis
 
 ## Provided Components
 
 ### 1. API Service (Partially Complete)
 
-A Spring Boot REST API with:
-
-- JacksonConfig.java
-- SwaggerConfig.java
-- Complete CRUD operations
-- Models and DTOs
-- Repository layer
-- Service layer
-- Unit tests
-
-Directory structure:
+A Spring Boot REST API that includes:
 
 ```
 src/api/
@@ -44,36 +69,76 @@ src/api/
         └── resources/
 ```
 
+Features:
+
+- CRUD operations for taxi rides
+- Price range filtering with pagination
+- Redis caching (configuration needed)
+- OpenAPI documentation
+- Complete test suite
+
 ### 2. Data Generator (Complete)
 
-A Python service that:
+A Python service generating taxi data:
 
-- Generates taxi ride data
-- Includes test suite
-- Has RabbitMQ integration
+```
+src/data-generator/
+├── Dockerfile
+├── generator.py
+├── requirements.txt
+└── tests/
+    └── test_generator.py
+```
 
-## Your Tasks
+Sample Data Structure:
 
-### 1. Implement Redis Configuration
-
-Complete the Redis configuration for the API:
-
-```java
-// RedisConfig.java needs implementation
-@Configuration
-@EnableCaching
-public class RedisConfig {
-    // Implement:
-    // - Connection configuration
-    // - Serialization setup
-    // - Cache management
-    // - Health checks
+```json
+{
+    "start": {
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "place": "New York City"
+    },
+    "end": {
+        "latitude": 40.7580,
+        "longitude": -73.9855,
+        "place": "Times Square"
+    },
+    "important_places": [
+        {
+            "latitude": 40.7527,
+            "longitude": -73.9772,
+            "place": "Grand Central Terminal"
+        }
+    ],
+    "start_date": "2024-01-01T10:00:00",
+    "end_date": "2024-01-01T10:30:00",
+    "price": 25.50,
+    "distance_km": 3.4
 }
 ```
 
-### 2. Complete Kubernetes Infrastructure
+## Required Implementations
 
-Implement the following missing configurations:
+### 1. Redis Configuration
+
+Implement complete Redis configuration:
+
+```
+src/api/src/main/java/com/taxidata/api/config/RedisConfig.java
+```
+
+Requirements:
+
+- Connection pooling
+- Serialization configuration
+- Cache management
+- Error handling
+- Health checks
+
+### 2. Kubernetes Infrastructure
+
+Implement all K8s configurations:
 
 ```
 k8s/
@@ -94,9 +159,9 @@ k8s/
     └── redis-svc.yaml     # IMPLEMENT
 ```
 
-### 3. Implement Processor Service
+### 3. Processor Service
 
-Complete the processor service implementation:
+Implement the complete processor:
 
 ```
 src/processor/
@@ -108,191 +173,124 @@ src/processor/
     │   ├── Location.java              # IMPLEMENT
     │   └── TaxiRide.java              # IMPLEMENT
     ├── repository/
-    │   └── TaxiRiderRepository.java    # IMPLEMENT
+    │   └── TaxiRiderRepository.java   # IMPLEMENT
     └── service/
-        └── TaxiRideProcessor.java      # IMPLEMENT
+        └── TaxiRideProcessor.java     # IMPLEMENT
 ```
 
-### 4. Create Build & Deployment Automation
+### 4. Build & Deployment Automation
 
-Implement the following:
+#### Required Port Configuration
 
-```bash
-# Makefile        # IMPLEMENT
-# Common operations needed:
-- cluster-create
-- cluster-delete
-- build-images
-- load-images
-- deploy-all
-- check-pods
-- clean-all
-
-# skaffold.yaml   # IMPLEMENT
-# Configuration for:
-- Build automation
-- Image pushing
-- Deployment management
-- Development workflow
+```
+- API: 8081 (forwarded from 8080)
+- Redis: 6380 (forwarded from 6379)
+- PostgreSQL: 5432
+- RabbitMQ: 5672 (AMQP), 15672 (Management)
 ```
 
-## Technical Requirements
 
-### Redis Configuration
+#### Required Makefile Targets
 
-- Connection pooling
-- Proper serialization
-- Cache configuration
-- Error handling
-- Health checks
-
-### Infrastructure
-
-- Resource limits and requests
-- Health checks
-- Persistent storage for PostgreSQL
-- Service discovery
-- Environment configurations
-
-### Processor Service
-
-- Circuit breaker pattern
-- RabbitMQ message consumption
-- PostgreSQL data persistence
-- Error handling
-- Unit tests
-
-### Build Automation
-
-- Development workflow
-- Image building
-- Deployment management
-- Debug capabilities
-
-## Detailed Implementation Requirements
-
-### 1. Redis Configuration Example Structure
-
-```java
-@Configuration
-@EnableCaching
-public class RedisConfig implements CachingConfigurer {
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.redis.port}")
-    private int redisPort;
-
-    // Implement:
-    // 1. Connection factory
-    // 2. Redis template
-    // 3. Cache manager
-    // 4. Error handler
-}
-```
-
-### 2. Makefile Structure
+Initial Setup:
 
 ```makefile
-# Required targets:
-cluster-create:
-    # Implement cluster creation
-
-deploy-all:
-    # Implement full deployment
-
-# Add other necessary targets
+all                     - Create cluster and perform full deploy
+cluster-create          - Create new Kind cluster
+cluster-delete          - Delete existing Kind cluster
 ```
 
-### 3. Skaffold Configuration
+Deployment Management:
 
-```yaml
-# skaffold.yaml
-apiVersion: skaffold/v2beta29
-kind: Config
-build:
-  # Implement build configuration
-deploy:
-  # Implement deploy configuration
+```makefile
+deploy-all             - Deploy complete system
+deploy-infrastructure  - Deploy infrastructure components
+deploy-apps           - Deploy application components
+redeploy-apps         - Rebuild and redeploy applications
 ```
 
-## Getting Started
+Resource Management:
 
-1. Start with Redis configuration:
+```makefile
+create-secrets        - Create required Kubernetes secrets
+delete-secrets        - Remove all secrets
+build-images         - Build all Docker images
+load-images          - Load images into Kind cluster
+```
 
-   ```bash
-   # Implement RedisConfig.java
-   # Test cache operations
-   ```
+Monitoring and Debugging:
 
-2. Create build automation:
+```makefile
+check-pods           - View pod status
+check-logs           - View application logs
+```
 
-   ```bash
-   # Create Makefile
-   # Setup skaffold.yaml
-   ```
+Service Management:
 
-3. Implement infrastructure:
+```makefile
+port-forward-all     - Setup all port forwards
+stop-port-forward    - Stop all port forwards
+```
 
-   ```bash
-   # Work through each K8s component
-   # Test deployments individually
-   ```
+Cleanup:
 
-4. Implement processor:
-
-   ```bash
-   # Develop processor components
-   # Test integration
-   ```
+```makefile
+clean-all           - Complete system cleanup
+clean-deploy        - Clean and redeploy
+```
 
 ## Evaluation Criteria
 
-### Configuration Implementation (25%)
+### Infrastructure Design (35%)
 
-- Redis configuration quality
-- Build automation effectiveness
 - Kubernetes configuration quality
 - Resource management
-
-### Processor Implementation (25%)
-
-- Code quality
-- Error handling
-- Testing coverage
-- Integration with other services
-
-### Infrastructure (25%)
-
-- Kubernetes setup
 - Service configuration
 - Security implementation
-- Resource management
 
-### Automation & Documentation (25%)
+### Code Quality (35%)
 
-- Build process
-- Deployment automation
+- Clean code principles
+- Error handling
+- Testing coverage
+- Documentation
+- Best practices
+
+### System Integration (30%)
+
+- Component interaction
+- Build automation
+- Deployment process
+- Operational excellence
+
+
+## Submission Requirements
+
+### 1. Code Repository
+
+- Complete source code
+- Kubernetes configurations
+- Build scripts
+- Documentation
+
+### 2. Documentation
+
+- Architecture overview
 - Setup instructions
+- Design decisions
 - Testing procedures
 
-## Deliverables
+### 3. Working Deployment
 
-1. Complete Redis configuration
-2. Complete Kubernetes configurations
-3. Implemented processor service
-4. Makefile and Skaffold configuration
-5. Updated documentation
-6. Test coverage
-
-## Timeline
-
-- Expected completion: 3-4 days
-- Focus on quality over speed
+- Successful `make all` execution
+- All services running
+- Port forwarding working
+- Basic operations functional
 
 ## Notes
 
-- Start with Redis and build automation
-- Test each component individually
-- Document your decisions
-- Consider error scenarios
+- Focus on automation and reliability
+- Document failure handling
+- Consider resource constraints
+- Follow Kind best practices
+- Implement proper health checks
