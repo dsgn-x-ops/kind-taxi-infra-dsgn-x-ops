@@ -10,7 +10,7 @@ Work for a Transportation Department analyzing taxi ride patterns in NYC. A data
 
 ```
 Backend:
-- Java 21 or Kotlin 1.9+
+- Java 21
 - Spring Boot 3.2
 - Python 3.11
 - PostgreSQL 14
@@ -24,7 +24,7 @@ Infrastructure:
 - Skaffold
 
 Build Tools:
-- Gradle 8.5+
+- Gradle 8.5+ (Maven to Gradle migration required)
 ```
 
 ### Optional (For Bonus)
@@ -41,6 +41,21 @@ CI/CD:
   - Building and publishing Docker images to DockerHub
 ```
 
+## Important Note About Build System Migration
+
+As part of this challenge, you are required to:
+1. Convert all existing Maven configurations to Gradle
+2. Set up new services using Gradle
+3. Implement all build automation using Gradle
+4. Ensure the build system migration maintains all existing functionality
+5. Document your migration approach and any issues encountered
+
+The provided Maven configurations must be converted to use:
+- Kotlin DSL (`build.gradle.kts`)
+- Multi-project Gradle setup
+- Appropriate Gradle plugins and configurations
+- Equivalent dependency management
+
 ## System Architecture
 
 ### Infrastructure Components
@@ -51,21 +66,21 @@ CI/CD:
 
 ## Provided Components
 
-### 1. API Service (Partially Complete)
+### 1. API Service (Requires Maven to Gradle Migration)
 
 A Spring Boot REST API that includes:
 
 ```
 src/api/
 ├── Dockerfile
-├── build.gradle.kts
+├── build.gradle.kts     # Convert from pom.xml
 └── src/
     └── main/
-        ├── kotlin/com/taxidata/api/    # or java/com/taxidata/api/
+        ├── java/com/taxidata/api/
         │   ├── config/
-        │   │   ├── JacksonConfig.kt
-        │   │   ├── RedisConfig.kt    # IMPLEMENT
-        │   │   └── SwaggerConfig.kt
+        │   │   ├── JacksonConfig.java
+        │   │   ├── RedisConfig.java    # IMPLEMENT
+        │   │   └── SwaggerConfig.java
         │   ├── controller/
         │   ├── model/
         │   ├── repository/
@@ -129,7 +144,7 @@ Sample Data Structure:
 Implement complete Redis configuration:
 
 ```
-src/api/src/main/kotlin/com/taxidata/api/config/RedisConfig.kt
+src/api/src/main/java/com/taxidata/api/config/RedisConfig.java
 ```
 
 Requirements:
@@ -163,23 +178,23 @@ k8s/
     └── redis-svc.yaml     # IMPLEMENT
 ```
 
-### 3. Processor Service
+### 3. New Processor Service
 
-Implement the complete processor:
+Implement the complete processor using Gradle:
 
 ```
 src/processor/
-└── src/main/kotlin/com/taxidata/processor/    # or java
+└── src/main/java/com/taxidata/processor/
     ├── config/
-    │   ├── CircuitBreakerConfig.kt  # IMPLEMENT
-    │   └── RabbitConfig.kt          # IMPLEMENT
+    │   ├── CircuitBreakerConfig.java  # IMPLEMENT
+    │   └── RabbitConfig.java          # IMPLEMENT
     ├── model/
-    │   ├── Location.kt              # IMPLEMENT
-    │   └── TaxiRide.kt              # IMPLEMENT
+    │   ├── Location.java              # IMPLEMENT
+    │   └── TaxiRide.java              # IMPLEMENT
     ├── repository/
-    │   └── TaxiRiderRepository.kt   # IMPLEMENT
+    │   └── TaxiRiderRepository.java   # IMPLEMENT
     └── service/
-        └── TaxiRideProcessor.kt     # IMPLEMENT
+        └── TaxiRideProcessor.java     # IMPLEMENT
 ```
 
 ### 4. Build & Deployment Automation
@@ -231,16 +246,41 @@ Implement a GitHub Actions workflow that:
 - Runs the test suite
 - Builds and publishes Docker images to DockerHub
 
+## Project Structure
+
+Implement a Gradle multi-project structure:
+
+```
+.
+├── build.gradle.kts
+├── settings.gradle.kts
+├── buildSrc/              # Optional for shared build logic
+├── src/
+│   ├── api/
+│   │   └── build.gradle.kts
+│   └── processor/
+│       └── build.gradle.kts
+└── k8s/
+```
+
 ## Evaluation Criteria
 
-### Infrastructure Design (35%)
+### Build System Migration and Setup (25%)
+
+- Successful Maven to Gradle conversion
+- Proper multi-project structure
+- Build script organization
+- Dependency management
+- Plugin configuration
+
+### Infrastructure Design (25%)
 
 - Kubernetes configuration quality
 - Resource management
 - Service configuration
 - Security implementation
 
-### Code Quality (35%)
+### Code Quality (25%)
 
 - Clean code principles
 - Error handling
@@ -248,12 +288,13 @@ Implement a GitHub Actions workflow that:
 - Documentation
 - Best practices
 
-### System Integration (30%)
+### System Integration (25%)
 
 - Component interaction
 - Build automation
 - Deployment process
 - Operational excellence
+- Task automation
 
 ## Submission Requirements
 
@@ -267,17 +308,23 @@ Implement a GitHub Actions workflow that:
 
 ### 2. Documentation
 
+Required sections:
 - Architecture overview
 - Setup instructions
 - Design decisions
 - Testing procedures
+- Maven to Gradle migration process
+- Known limitations or issues
+- Future improvements
 
 ### 3. Working Deployment
 
+Requirements:
 - Successful Gradle task execution for deployment
 - All services running
 - Port forwarding working
 - Basic operations functional
+- Successful test execution
 
 ## Notes
 
@@ -286,5 +333,6 @@ Implement a GitHub Actions workflow that:
 - Consider resource constraints
 - Follow Kind best practices
 - Implement proper health checks
-- Use Kotlin best practices if choosing Kotlin
 - Ensure proper Gradle configuration for multi-project setup
+- Document all build system migration decisions
+
