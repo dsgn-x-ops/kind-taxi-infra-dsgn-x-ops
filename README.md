@@ -10,7 +10,7 @@ Work for a Transportation Department analyzing taxi ride patterns in NYC. A data
 
 ```
 Backend:
-- Java 17
+- Java 21 or Kotlin 1.9+
 - Spring Boot 3.2
 - Python 3.11
 - PostgreSQL 14
@@ -24,8 +24,7 @@ Infrastructure:
 - Skaffold
 
 Build Tools:
-- Maven
-- Make
+- Gradle 8.5+
 ```
 
 ### Optional (For Bonus)
@@ -35,6 +34,11 @@ Monitoring:
 - Prometheus
 - OpenTelemetry
 - Jaeger
+
+CI/CD:
+- GitHub Actions workflow for:
+  - Running tests
+  - Building and publishing Docker images to DockerHub
 ```
 
 ## System Architecture
@@ -54,14 +58,14 @@ A Spring Boot REST API that includes:
 ```
 src/api/
 ├── Dockerfile
-├── pom.xml
+├── build.gradle.kts
 └── src/
     └── main/
-        ├── java/com/taxidata/api/
+        ├── kotlin/com/taxidata/api/    # or java/com/taxidata/api/
         │   ├── config/
-        │   │   ├── JacksonConfig.java
-        │   │   ├── RedisConfig.java    # IMPLEMENT
-        │   │   └── SwaggerConfig.java
+        │   │   ├── JacksonConfig.kt
+        │   │   ├── RedisConfig.kt    # IMPLEMENT
+        │   │   └── SwaggerConfig.kt
         │   ├── controller/
         │   ├── model/
         │   ├── repository/
@@ -125,7 +129,7 @@ Sample Data Structure:
 Implement complete Redis configuration:
 
 ```
-src/api/src/main/java/com/taxidata/api/config/RedisConfig.java
+src/api/src/main/kotlin/com/taxidata/api/config/RedisConfig.kt
 ```
 
 Requirements:
@@ -165,17 +169,17 @@ Implement the complete processor:
 
 ```
 src/processor/
-└── src/main/java/com/taxidata/processor/
+└── src/main/kotlin/com/taxidata/processor/    # or java
     ├── config/
-    │   ├── CircuitBreakerConfig.java  # IMPLEMENT
-    │   └── RabbitConfig.java          # IMPLEMENT
+    │   ├── CircuitBreakerConfig.kt  # IMPLEMENT
+    │   └── RabbitConfig.kt          # IMPLEMENT
     ├── model/
-    │   ├── Location.java              # IMPLEMENT
-    │   └── TaxiRide.java              # IMPLEMENT
+    │   ├── Location.kt              # IMPLEMENT
+    │   └── TaxiRide.kt              # IMPLEMENT
     ├── repository/
-    │   └── TaxiRiderRepository.java   # IMPLEMENT
+    │   └── TaxiRiderRepository.kt   # IMPLEMENT
     └── service/
-        └── TaxiRideProcessor.java     # IMPLEMENT
+        └── TaxiRideProcessor.kt     # IMPLEMENT
 ```
 
 ### 4. Build & Deployment Automation
@@ -189,55 +193,43 @@ src/processor/
 - RabbitMQ: 5672 (AMQP), 15672 (Management)
 ```
 
+#### Required Gradle Tasks
 
-#### Required Makefile Targets
+Create Gradle tasks for the following operations:
 
 Initial Setup:
-
-```makefile
-all                     - Create cluster and perform full deploy
-cluster-create          - Create new Kind cluster
-cluster-delete          - Delete existing Kind cluster
-```
+- Create new Kind cluster
+- Delete existing Kind cluster
+- Create cluster and perform full deploy
 
 Deployment Management:
-
-```makefile
-deploy-all             - Deploy complete system
-deploy-infrastructure  - Deploy infrastructure components
-deploy-apps           - Deploy application components
-redeploy-apps         - Rebuild and redeploy applications
-```
+- Deploy infrastructure components
+- Deploy application components
+- Rebuild and redeploy applications
 
 Resource Management:
-
-```makefile
-create-secrets        - Create required Kubernetes secrets
-delete-secrets        - Remove all secrets
-build-images         - Build all Docker images
-load-images          - Load images into Kind cluster
-```
+- Create required Kubernetes secrets
+- Remove all secrets
+- Build all Docker images
+- Load images into Kind cluster
 
 Monitoring and Debugging:
-
-```makefile
-check-pods           - View pod status
-check-logs           - View application logs
-```
+- View pod status
+- View application logs
 
 Service Management:
-
-```makefile
-port-forward-all     - Setup all port forwards
-stop-port-forward    - Stop all port forwards
-```
+- Setup all port forwards
+- Stop all port forwards
 
 Cleanup:
+- Complete system cleanup
+- Clean and redeploy
 
-```makefile
-clean-all           - Complete system cleanup
-clean-deploy        - Clean and redeploy
-```
+### 5. CI/CD Implementation (Bonus)
+
+Implement a GitHub Actions workflow that:
+- Runs the test suite
+- Builds and publishes Docker images to DockerHub
 
 ## Evaluation Criteria
 
@@ -263,15 +255,15 @@ clean-deploy        - Clean and redeploy
 - Deployment process
 - Operational excellence
 
-
 ## Submission Requirements
 
 ### 1. Code Repository
 
 - Complete source code
 - Kubernetes configurations
-- Build scripts
+- Gradle build scripts
 - Documentation
+- GitHub Actions workflow (if implementing bonus)
 
 ### 2. Documentation
 
@@ -282,7 +274,7 @@ clean-deploy        - Clean and redeploy
 
 ### 3. Working Deployment
 
-- Successful `make all` execution
+- Successful Gradle task execution for deployment
 - All services running
 - Port forwarding working
 - Basic operations functional
@@ -294,3 +286,5 @@ clean-deploy        - Clean and redeploy
 - Consider resource constraints
 - Follow Kind best practices
 - Implement proper health checks
+- Use Kotlin best practices if choosing Kotlin
+- Ensure proper Gradle configuration for multi-project setup
