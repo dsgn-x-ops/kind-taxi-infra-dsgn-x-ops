@@ -1,11 +1,10 @@
 # src/api/Dockerfile
-FROM maven:3.9-eclipse-temurin-17-alpine AS build
+FROM gradle:8.5-jdk17-alpine AS build
 WORKDIR /workspace/app
-COPY pom.xml .
-COPY src src
-RUN mvn clean package -DskipTests
+COPY . .
+RUN ./gradlew :src:api:build -x test
 
 FROM eclipse-temurin:17-jre-alpine
 VOLUME /tmp
-COPY --from=build /workspace/app/target/*.jar app.jar
+COPY --from=build /workspace/app/src/api/build/libs/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
