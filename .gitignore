@@ -9,6 +9,7 @@ target/
 build/
 **/build/
 !gradle/wrapper/gradle-wrapper.jar
+*jar
 
 # Wrapper (Windows)
 gradlew.bat
