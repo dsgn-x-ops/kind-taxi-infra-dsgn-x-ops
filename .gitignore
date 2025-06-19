@@ -4,6 +4,15 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Wrapper (Windows)
+gradlew.bat
+
 # Python
 __pycache__/
 *.py[cod]
