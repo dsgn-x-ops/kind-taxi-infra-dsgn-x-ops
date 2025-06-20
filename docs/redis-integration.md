@@ -1,6 +1,6 @@
 # Redis Integration – API Service
 
-**Purpose:**
+**Objective:**
 
 Implement Redis caching in the API service to improve performance by reducing redundant access to the PostgreSQL database. This setup allows frequently accessed data (e.g., ride searches) to be retrieved directly from memory, drastically improving response time.
 

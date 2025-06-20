@@ -2,6 +2,7 @@ package com.taxidata.api.config;
 
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.SimpleCacheErrorHandler;
@@ -18,9 +19,15 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 @EnableCaching
 public class RedisConfig {
 
+    @Value("${spring.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
+
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration("localhost", 6379);
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
         return new LettuceConnectionFactory(config);
     }
 

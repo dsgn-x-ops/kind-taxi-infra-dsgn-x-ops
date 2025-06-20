@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generator
+  namespace: taxi-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: generator
+  template:
+    metadata:
+      labels:
+        app: generator
+    spec:
+      containers:
+        - name: generator
+          image: generator:latest  # Substituir pelo nome da tua imagem real
+          env:
+            - name: BATCH_SIZE
+              value: "100"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: password
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
