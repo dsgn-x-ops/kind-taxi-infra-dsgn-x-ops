@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - dev
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,3 +18,5 @@ jobs:
           distribution: 'temurin'
       - name: Build project
         run: ./gradlew build --no-daemon
+      - name: Test Processor
+        run: ./gradlew :src:processor:test --warning-mode none

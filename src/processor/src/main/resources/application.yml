@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: taxi-processor
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/taxidb}
+    username: ${SPRING_DATASOURCE_USERNAME:taxi_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:taxi_pass}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+
+rabbitmq:
+  queue: taxi-ride-queue

@@ -4,12 +4,17 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Gradle
-.gradle/
-build/
-**/build/
-!gradle/wrapper/gradle-wrapper.jar
-*jar
+# Java & Gradle
+/build/
+**/build/libs/*.jar
+/target/
+*.class
+*.jar
+*.war
+*.java.orig
+*.ear
+.gradle
+*/.gradle
 
 # Wrapper (Windows)
 gradlew.bat
@@ -17,7 +22,6 @@ gradlew.bat
 # Python
 __pycache__/
 *.py[cod]
-*.class
 venv/
 .env
 
@@ -29,9 +33,15 @@ venv/
 .vscode/
 *.swp
 *.swo
+out/
+output/
+**/build/
 
 # Logs
 *.log
+*.log.gz
+*.log-*.gz
+logs/
 
 # OS generated files
 .DS_Store
@@ -44,6 +54,9 @@ Thumbs.db
 
 # Kubernetes
 kubeconfig
+*.tar
+*.img
+*.bak
 
 # Local development
 .env.local

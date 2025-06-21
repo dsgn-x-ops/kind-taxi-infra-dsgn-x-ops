@@ -32,6 +32,10 @@ dependencies {
 
     // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
 }
 
 // Spring Cloud version (equivalente a dependencyManagement)
@@ -43,4 +47,12 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+    }
 }
