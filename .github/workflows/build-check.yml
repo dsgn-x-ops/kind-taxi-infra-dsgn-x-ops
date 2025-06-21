@@ -17,3 +17,5 @@ jobs:
           distribution: 'temurin'
       - name: Build project
         run: ./gradlew build --no-daemon
+      - name: Test Processor
+        run: ./gradlew :src:processor:test --warning-mode none
