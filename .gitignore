@@ -16,9 +16,6 @@ target/
 .gradle
 */.gradle
 
-# Wrapper (Windows)
-gradlew.bat
-
 # Python
 __pycache__/
 *.py[cod]

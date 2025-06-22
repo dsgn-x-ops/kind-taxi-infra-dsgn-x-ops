@@ -1,3 +1,5 @@
+import java.util.Locale
+
 plugins {
     id("org.springframework.boot") version "3.2.0" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
@@ -23,16 +25,30 @@ subprojects {
 
 // === Infrastructure (Kind e K8s) ===
 
+fun runScriptForOS(windowsScript: String, unixScript: String): List<String> {
+    return if (System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")) {
+        listOf("cmd", "/c", windowsScript)
+    } else {
+        listOf("bash", unixScript)
+    }
+}
+
 tasks.register<Exec>("setupKind") {
     group = "infrastructure"
-    description = "Creates cluster Kind, namespace and secrets"
-    commandLine("bash", "scripts/setup-kind.sh")
+    description = "Creates Kind cluster"
+    commandLine(runScriptForOS("scripts\\setup-kind.bat", "scripts/setup-kind.sh"))
 }
 
 tasks.register<Exec>("cleanupCluster") {
     group = "infrastructure"
     description = "Removes namespace taxi-system"
-    commandLine("bash", "scripts/cleanup.sh")
+    commandLine(runScriptForOS("scripts\\cleanup.bat", "scripts/cleanup.sh"))
+}
+
+tasks.register<Exec>("deleteKind") {
+    group = "infrastructure"
+    description = "Eliminates Kind cluster"
+    commandLine(runScriptForOS("scripts\\delete-kind.bat", "scripts/delete-kind.sh"))
 }
 
 // === Docker ===
@@ -47,6 +63,12 @@ tasks.register<Exec>("buildProcessorImage") {
     group = "docker"
     description = "Builds the Docker image from Processor service"
     commandLine("docker", "build", "-t", "taxi-processor", "src/processor")
+}
+
+tasks.register<Exec>("buildDataGenerator") {
+    group = "docker"
+    description = "Builds the Docker image from Generator service"
+    commandLine("docker", "build", "-t", "taxi-generator", "src/data-generator")
 }
 
 tasks.register<Exec>("loadImagesIntoKind") {
@@ -96,11 +118,11 @@ tasks.register<Exec>("viewLogs") {
 tasks.register<Exec>("startPortForward") {
     group = "services"
     description = "Starts API port-forward in background"
-    commandLine("bash", "scripts/start-portforward.sh")
+    commandLine(runScriptForOS("scripts\\start-portforward.bat", "scripts/start-portforward.sh"))
 }
 
 tasks.register<Exec>("stopPortForward") {
     group = "services"
     description = "Terminates API port-forward"
-    commandLine("bash", "scripts/stop-portforward.sh")
+    commandLine(runScriptForOS("scripts\\stop-portforward.bat", "scripts/stop-portforward.sh"))
 }
