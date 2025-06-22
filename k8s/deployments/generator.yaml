@@ -1,21 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: generator
+  name: taxi-generator
   namespace: taxi-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: generator
+      app: taxi-generator
   template:
     metadata:
       labels:
-        app: generator
+        app: taxi-generator
     spec:
       containers:
-        - name: generator
-          image: generator:latest  # Substituir pelo nome da tua imagem real
+        - name: taxi-generator
+          image: taxi-generator:v1.01
+          imagePullPolicy: IfNotPresent
           env:
             - name: BATCH_SIZE
               value: "100"
@@ -24,12 +25,12 @@ spec:
             - name: RABBITMQ_USER
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq-secret
+                  name: rabbitmq-credentials
                   key: username
             - name: RABBITMQ_PASS
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq-secret
+                  name: rabbitmq-credentials
                   key: password
           resources:
             requests:

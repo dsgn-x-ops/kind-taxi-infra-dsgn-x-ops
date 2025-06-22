@@ -14,22 +14,22 @@ spec:
         app: postgres
     spec:
       containers:
-        - name: postgres
+        - name: taxidb
           image: postgres:14.11
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: taxidata
+              value: taxidb
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  key: user
+                  name: db-credentials
+                  key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: db-credentials
                   key: password
           volumeMounts:
             - mountPath: /var/lib/postgresql/data

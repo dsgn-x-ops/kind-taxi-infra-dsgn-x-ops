@@ -56,19 +56,19 @@ tasks.register<Exec>("deleteKind") {
 tasks.register<Exec>("buildApiImage") {
     group = "docker"
     description = "Builds the Docker image from API service"
-    commandLine("docker", "build", "-t", "taxi-api", "src/api")
+    commandLine("docker", "build", "-f", "src/api/Dockerfile", "-t", "taxi-api:v1.01", ".")
 }
 
 tasks.register<Exec>("buildProcessorImage") {
     group = "docker"
     description = "Builds the Docker image from Processor service"
-    commandLine("docker", "build", "-t", "taxi-processor", "src/processor")
+    commandLine("docker", "build", "-f", "src/processor/Dockerfile", "-t", "taxi-processor:v1.01", ".")
 }
 
 tasks.register<Exec>("buildDataGenerator") {
     group = "docker"
     description = "Builds the Docker image from Generator service"
-    commandLine("docker", "build", "-t", "taxi-generator", "src/data-generator")
+    commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
 }
 
 tasks.register<Exec>("loadImagesIntoKind") {
