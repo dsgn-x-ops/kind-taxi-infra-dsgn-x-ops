@@ -71,16 +71,37 @@ tasks.register<Exec>("buildDataGenerator") {
     commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
 }
 
+tasks.register<Exec>("buildAllImages") {
+    group = "docker"
+    description = "Builds all images"
+    doLast {
+        exec {
+            commandLine("docker", "build", "-f", "src/api/Dockerfile", "-t", "taxi-api:v1.01", ".")
+        }
+        exec {
+            commandLine("docker", "build", "-f", "src/processor/Dockerfile", "-t", "taxi-processor:v1.01", ".")
+        }
+
+        exec {
+            commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
+        }
+    }
+}
+
 tasks.register<Exec>("loadImagesIntoKind") {
     group = "docker"
     description = "Loads all images into cluster Kind"
     dependsOn("buildApiImage", "buildProcessorImage")
     doLast {
         exec {
-            commandLine("kind", "load", "docker-image", "taxi-api")
+            commandLine("kind", "load", "docker-image", "taxi-api:v1.01")
         }
         exec {
-            commandLine("kind", "load", "docker-image", "taxi-processor")
+            commandLine("kind", "load", "docker-image", "taxi-processor:v1.01")
+        }
+
+        exec {
+            commandLine("kind", "load", "docker-image", "taxi-generator:v1.01")
         }
     }
 }
@@ -96,7 +117,7 @@ tasks.register<Exec>("deployManifests") {
 tasks.register("fullDeploy") {
     group = "deploy"
     description = "Cluster + images + manifests"
-    dependsOn("setupKind", "loadImagesIntoKind", "deployManifests")
+    dependsOn("setupKind", "buildAllImages", "loadImagesIntoKind", "deployManifests")
 }
 
 // === Debug ===
