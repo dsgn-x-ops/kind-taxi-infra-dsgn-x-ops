@@ -75,14 +75,14 @@ tasks.register<Exec>("buildAllImages") {
     group = "docker"
     description = "Builds all images"
     doLast {
-        exec {
+        project.exec {
             commandLine("docker", "build", "-f", "src/api/Dockerfile", "-t", "taxi-api:v1.01", ".")
         }
-        exec {
+        project.exec {
             commandLine("docker", "build", "-f", "src/processor/Dockerfile", "-t", "taxi-processor:v1.01", ".")
         }
 
-        exec {
+        project.exec {
             commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
         }
     }
