@@ -71,7 +71,7 @@ tasks.register<Exec>("buildDataGenerator") {
     commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
 }
 
-tasks.register<Exec>("buildAllImages") {
+tasks.register("buildAllImages") {
     group = "docker"
     description = "Builds all images"
     doLast {
@@ -86,6 +86,7 @@ tasks.register<Exec>("buildAllImages") {
             commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
         }
     }
+    mustRunAfter("setupKind")
 }
 
 tasks.register<Exec>("loadImagesIntoKind") {
@@ -104,6 +105,7 @@ tasks.register<Exec>("loadImagesIntoKind") {
             commandLine("kind", "load", "docker-image", "taxi-generator:v1.01")
         }
     }
+    mustRunAfter("buildAllImages")
 }
 
 // === Deploy Kubernetes ===
@@ -112,6 +114,7 @@ tasks.register<Exec>("deployManifests") {
     group = "deploy"
     description = "Applies the Kubernetes manifests"
     commandLine("kubectl", "apply", "-f", "k8s/")
+    mustRunAfter("loadImagesIntoKind")
 }
 
 tasks.register("fullDeploy") {
