@@ -1,0 +1,22 @@
+# IDE configurations and directories
+.idea
+.gradle
+.git
+.vscode
+
+# Build directories
+build/
+src/**/build/
+
+# Docs and logs
+docs/
+README.md
+Makefile
+*.md
+*.log
+
+# Kubernetes and CI/CD configurations
+k8s/
+scripts/
+skaffold.yaml
+kind-config.yaml
