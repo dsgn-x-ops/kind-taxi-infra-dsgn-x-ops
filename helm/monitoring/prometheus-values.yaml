@@ -1,0 +1,6 @@
+server:
+  extraScrapeConfigs:
+    - job_name: 'taxi-api'
+      metrics_path: /actuator/prometheus
+      static_configs:
+        - targets: ['api-svc.taxi-system.svc.cluster.local:8081']

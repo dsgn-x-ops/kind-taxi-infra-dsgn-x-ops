@@ -1,0 +1,52 @@
+site_name: Taxi Data System
+site_description: Full-stack microservices documentation for the Taxi Data System project
+site_author: João Barata
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.annotate
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+  palette:
+    scheme: default
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Architecture Overview: architecture_overview.md
+  - Setup: setup_instructions.md
+  - Design Decisions:
+      - Processor Design: processor_development.md
+      - Redis Strategy: redis_integration.md
+  - Testing Procedures:
+      - Processor Unit Test: taxi_ride_processor_test.md
+      - Integration Results: taxi_data_system_doc.md
+  - Migration (Maven → Gradle): migration_notes.md
+  - Kubernetes Deployment:
+      - Redis: redis_deployment_kubernetes.md
+      - RabbitMQ: rabbitmq_deployment_kubernetes.md
+      - PostgreSQL: postgres_deployment_kubernetes.md
+      - Generator: generator_deployment_kubernetes.md
+  - Gradle Automations: gradle_automations.md
+  - Environment Troubleshooting: environment_troubleshooting.md
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.arithmatex
+  - attr_list
+  - admonition
+  - codehilite
+  - footnotes
+  - tables
+  - toc:
+      permalink: true

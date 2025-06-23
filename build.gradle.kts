@@ -71,37 +71,99 @@ tasks.register<Exec>("buildDataGenerator") {
     commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
 }
 
-tasks.register<Exec>("loadImagesIntoKind") {
+tasks.register("buildAllImages") {
+    group = "docker"
+    description = "Builds all images"
+    doLast {
+        project.exec {
+            commandLine("docker", "build", "-f", "src/api/Dockerfile", "-t", "taxi-api:v1.01", ".")
+        }
+        project.exec {
+            commandLine("docker", "build", "-f", "src/processor/Dockerfile", "-t", "taxi-processor:v1.01", ".")
+        }
+
+        project.exec {
+            commandLine("docker", "build", "-t", "taxi-generator:v1.01", "src/data-generator")
+        }
+    }
+    mustRunAfter("setupKind")
+}
+
+tasks.register("loadImagesIntoKind") {
     group = "docker"
     description = "Loads all images into cluster Kind"
     dependsOn("buildApiImage", "buildProcessorImage")
     doLast {
         exec {
-            commandLine("kind", "load", "docker-image", "taxi-api")
+            commandLine("kind", "load", "docker-image", "taxi-api:v1.01")
         }
         exec {
-            commandLine("kind", "load", "docker-image", "taxi-processor")
+            commandLine("kind", "load", "docker-image", "taxi-processor:v1.01")
+        }
+
+        exec {
+            commandLine("kind", "load", "docker-image", "taxi-generator:v1.01")
         }
     }
+    mustRunAfter("buildAllImages")
 }
 
 // === Deploy Kubernetes ===
 
+tasks.register("deployInfra") {
+    group = "Deployment Management"
+    description = "Deploy infrastructure manifests (DB, MQ, Redis)"
+    doLast {
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/rabbitmq.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/redis.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/postgres.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/services/postgres-svc.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/persistent-volumes/postgres-pv.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/persistent-volumes/postgres-pvc.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/services/rabbitmq-svc.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/services/redis-svc.yaml") }
+    }
+}
+
+tasks.register("deployApps") {
+    group = "Deployment Management"
+    description = "Deploy application services (API, Generator, Processor)"
+    doLast {
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/generator.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/processor.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/api.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/services/api-svc.yaml") }
+    }
+}
+
 tasks.register<Exec>("deployManifests") {
     group = "deploy"
     description = "Applies the Kubernetes manifests"
-    commandLine("kubectl", "apply", "-f", "k8s/")
+    commandLine("kubectl", "apply", "-R", "-f", "k8s/")
+    mustRunAfter("loadImagesIntoKind")
 }
 
 tasks.register("fullDeploy") {
     group = "deploy"
     description = "Cluster + images + manifests"
-    dependsOn("setupKind", "loadImagesIntoKind", "deployManifests")
+    dependsOn("setupKind", "buildAllImages", "loadImagesIntoKind", "deployManifests")
+}
+
+tasks.register<Exec>("createSecrets") {
+    group = "deploy"
+    description = "Creates secrets"
+    commandLine(runScriptForOS("scripts\\create-secrets.bat", "scripts/create-secrets.sh"))
+}
+
+tasks.register<Exec>("deleteSecrets") {
+    group = "deploy"
+    description = "Delete secrets"
+    commandLine(runScriptForOS("scripts\\delete-secrets.bat", "scripts/delete-secrets.sh"))
 }
 
 // === Debug ===
 
-tasks.register<Exec>("viewPodStatus") {
+tasks.register<Exec>("viewPods") {
     group = "debug"
     description = "Get pods from taxi-system namespace"
     commandLine("kubectl", "get", "pods", "-n", "taxi-system")

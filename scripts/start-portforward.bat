@@ -1,6 +1,6 @@
 @echo off
 echo Port-forward in background...
 
-start /min cmd /c "kubectl port-forward svc/taxi-api 8080:8080 -n taxi-system > portforward.log 2>&1"
+start /min cmd /c "kubectl port-forward svc/taxi-api 8081:8080 -n taxi-system > portforward.log 2>&1"
 
 echo Port-forward active...

@@ -9,7 +9,7 @@ This project simulates a distributed taxi ride system using a microservices-base
 - A **Spring Boot processor** that consumes and stores ride data.
 - Full deployment on **Kubernetes (Kind)** with Redis, PostgreSQL, and RabbitMQ as infrastructure services.
 
-A comprehensive documentation set is available under the `docs/` folder, covering:
+This documentation cover the following:
 
 - Architecture overview
 - Setup instructions
@@ -17,16 +17,6 @@ A comprehensive documentation set is available under the `docs/` folder, coverin
 - Testing strategy
 - Gradle migration details
 - Known issues and future improvements
-
-To view the documentation as a browsable website, you can install MkDocs and serve it locally:
-
-```bash
-python -m pip install mkdocs 
-python -m pip install mkdocs-material
-python -m mkdocs serve
-```
-
-Then open: [http://localhost:8000](http://localhost:8000)
 
 ---
 
@@ -73,15 +63,3 @@ The system consists of several interconnected components:
     - **RabbitMQ** as the message broker
     - **Redis** for in-memory caching
     - **Kubernetes** to orchestrate and deploy all services
-
----
-
-## Documentation
-
-Explore the full technical documentation in the `docs/` folder or start the MkDocs server to see it live.
-
-```
-mkdocs serve
-```
-
-![img.png](images/docs.png)
