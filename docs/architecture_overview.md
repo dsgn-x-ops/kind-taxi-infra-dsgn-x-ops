@@ -73,5 +73,6 @@ All services are deployed to a local Kubernetes cluster using Kind. The manifest
 - Local debugging via port forwarding (e.g., `kubectl port-forward svc/api 8081:8080`).
 - Logs from API, Generator, and Processor confirm message flow and data persistence.
 - Swagger UI confirms request/response correctness.
+- http://localhost:8081/swagger-ui/index.html#/
 
 ---
