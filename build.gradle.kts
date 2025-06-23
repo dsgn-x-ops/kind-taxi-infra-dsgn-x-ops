@@ -118,6 +118,8 @@ tasks.register("deployInfra") {
         exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/redis.yaml") }
         exec { commandLine("kubectl", "apply", "-f", "k8s/deployments/postgres.yaml") }
         exec { commandLine("kubectl", "apply", "-f", "k8s/services/postgres-svc.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/persistent-volumes/postgres-pv.yaml") }
+        exec { commandLine("kubectl", "apply", "-f", "k8s/persistent-volumes/postgres-pvc.yaml") }
         exec { commandLine("kubectl", "apply", "-f", "k8s/services/rabbitmq-svc.yaml") }
         exec { commandLine("kubectl", "apply", "-f", "k8s/services/redis-svc.yaml") }
     }
